@@ -5,7 +5,7 @@ Exercise 1: Assume that we can perform ten million tests of the above kind each 
 5000s?
 
 at least 1000 s
-Average of all 12 digit primes divided by 10 000 000. Approximatly 5000
+Average of all 12 digit primes divided by 10 000 000. Approximatly 5000s
 
 Average first prime of 12 digit numbers? 
 
@@ -15,10 +15,12 @@ Average first prime of 12 digit numbers?
 
 P(k = n) = 1 / 33489857205
 
+largest 12 digit prime is 999 999 999 961
+smallest 12 digit prime is 100 000 000 003
 
-If you randomly select 2 12 digit primes, what is the smallest one of them on average?
-
-
+Best case is     1000.00000003 s
+Worst case is    9999.99999961 s
+Average case is ~5000 s
 
 
 
