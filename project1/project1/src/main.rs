@@ -1,8 +1,5 @@
-mod exercise4;
+mod exercise3;
 
 fn main() {
-    use std::time::Instant;
-    let now = Instant::now();
-    exercise4::exercise4();
-    println!("Took {}ms", now.elapsed().as_millis());
+    exercise3::exercise3();
 }

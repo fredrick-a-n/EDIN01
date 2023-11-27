@@ -1,7 +1,6 @@
 \documentclass[12pt]{article}
 
 
-
 % Packages
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -11,8 +10,10 @@
 \usepackage{fancyhdr}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{verbatimbox}
+\usepackage{listings, listings-rust}
+
 % Title page
-\title{Project 1}
+\title{Project 1: Quadratic Sieve in Rust}
 \author{Group 06: Fredrick Nilsson}
 \date{\today}
 
@@ -61,36 +62,66 @@ According to prisjakt.nu, we can buy an 1TB Seagate Barracuda ST1000DM010 harddr
 \section*{Exercise 3}
 Factoring my number, 127423368713324519534591, I found the factors 312709043917 and 407482198523.
 \\\\
-It took 15544 ms (15s 544ms) for the program to find them on a M1 Macbook Air (2021).
+It took 14458 ms (14s 458ms) for the program to find them on a Macbook Air (2020).
+\\\\
+In order to find the factors, I employed an implementation of the quadratic sieve algorithm\cite{wiki:quadraticsieve} in Rust. 
+The algorithm is largly based on the description found in the project description.
+\\\\
+It begins by running the \textit{exercise3} (line 5) function, where inside the function you have to pre-set the number you want to factor on line 12.
+The algorithm itself being with the calling of the function \textit{find\_factors} (line 23), which simply find 2 factors of the input number refered to as N from now on.
+It does this by first deciding on a bound B, that is set as double the root of N, rounded into the span of of 10000-50, as any numbers larger than that will use too much memory, and any smaller might break the program for a small N.
+Then it generates all primes lower than the square root of N with the function \textit{gen\_primes}(line 150), which is a simple implementation of the Sieve of Eratosthenes\cite{wiki:Eratosthenes}. These primes are then filtered so that we only keep primes that are quadratic residues of N through the function \textit{legendre}(line 174).
+The filtering is done in order the decrease the amount of primes we are working with in order too speed up the algorithm and reduce the memory usage. This should not cause a problem when it comes to generation of B-smooth numbers, as we are only interested in the quadratic residues of N.\cite{wiki:quadraticsieve}
+\\
+Once we have our primes the main time-sink of the algorithm is the generation of B-smooth numbers, which starts at line 45.
+In order too speed up this process, I employ multithreading, letting 8 different threads find these numbers at the same time.
+Originally I employed the formula \[ r = \lfloor\sqrt[]{N*k}\rfloor + j \] and \[ r^2 \mod N \] described in the project description to find and check B-smooth numbers, but I found that this was too inefficient and slow. 
+So I instead used the formula \[ r = \lfloor\sqrt[]N\rfloor + j \] which allowed me to only calculate the square root once, it also allowed me to get rid of the modulo operation, as \[r^2 = N + 2*j*\sqrt[]N + j^2\] which makes it so that when \[0 \leq  j < (\sqrt{2} - 1)\sqrt{N} \implies r^2\mod N = 2*j*\sqrt[]N + j^2 \]
+So for a decently large N, we can replace the modulo operation with a multiplication and a subtraction. These changes approximately reduces the run-time of the algorith to one fifth of the original, although it makes the algorithm fail for some small numbers. These calculations are performed in the different threads at line 54-67.
+\\
+All of the generate numbers are checked if they are smooth to our prime-base by the function \textit{check\_smoothness} (line 125).
+\\\\
+When we have all out B-smooth numbers, we can start figuring out if any combinations of them can have even exponants on all their prime factors by constructiong a matrix of their prime factors exponants modulo 2 at line 75-80.
+We find the possible solutions by gauss reduction, done by the function \textit{find\_solutions} (line 183), which formats the data and calls upon a recursive function \textit{recursive\_gauss} (line 200) to do the actual reduction.
+\\
+The \textit{recursive\_gauss} function works by first finding the first non-zero row, and then subtracting that row from all the other rows that have a 1 in the same column. It then calls itself recursively with the reduced matrix, and the next column. When the left hand matrix is reduced to purely zeroes, we assume that the rows matching on the right-hand matrix that match are possible solutions, and therefore return these.
+\\\\
+These possible solutions consists of both the B-smooth numbers and the prime factor exponants of their quadratic modulo form. Using these, we calculate the numbers a and b at line 82-102. Due to them being a solution we know the formula \[a^2=b^2\mod N\] is true. Therefore we can calculate some factor of N by employing \[\gcd (|a-b|, N)\]
+This will give some factor of N, although it can be the factor 1 or N itself. Therefore we employ a check that the factor are neither of these numbers, if it is we instead try the next solution. If we find a factor that is not 1 or N, we can assume that we have found a factor of N, and therefore we can calculate the other factor by dividing N by the found factor. Returning both of these factors the \textit{exercise3} function, finishing the program.
+
 \section*{Exercise 4}
 Factoring the number 92434447339770015548544881401 resulted in the factors \\
 727123456789451 and 127123456789451.
 \\\\
-It took 401126 ms (6m 41s 126ms) for the program to find them on a M1 Macbook Air (2021).
-
-\subsection*{Program printout}
+It took 388201 ms (6m 28s 201ms) for the program to find them on a M1 Macbook Air (2021).
+\\\\
+For exercise 4 the same algorithm as in exercise 3 was used, with no changes.
+\subsection*{Program printout for exercise 3}
 \begin{verbnobox}[\fontsize{8pt}{8pt}\selectfont]
-[2023-11-20T14:41:40.151Z INFO  project1::exercise4] Let's find some factors of N=92434447339770015548544881401
-[2023-11-20T14:41:40.151Z INFO  project1::exercise4] Got bound B = 10000
-[2023-11-20T14:41:40.151Z INFO  project1::exercise4] Sieving up to 10000
-[2023-11-20T14:41:40.225Z INFO  project1::exercise4] Waiting for threads to finish, please wait
-[2023-11-20T14:48:21.240Z INFO  project1::exercise4] Might have found something: 
-    1, 92434447339770015548544881401 => n = 92434447339770015548544881401*1 = 92434447339770015548544881401
-[2023-11-20T14:48:21.261Z INFO  project1::exercise4] Might have found something: 
-    127123456789451, 727123456789451 => n = 727123456789451*127123456789451 = 92434447339770015548544881401
-[2023-11-20T14:48:21.261Z INFO  project1::exercise4] Two factors of 92434447339770015548544881401 are 
-    (727123456789451, 127123456789451)
-Took 401126ms
+[2023-11-24T13:49:51.324Z INFO  project1::exercise4] Let's find some factors of N=127423368713324519534591
+[2023-11-24T13:49:51.324Z INFO  project1::exercise4] Got bound B = 10000
+[2023-11-24T13:49:51.421Z INFO  project1::exercise4] Generating B-smooth numbers, please wait
+[2023-11-24T13:50:05.780Z INFO  project1::exercise4] Found some factors: 312709043917, 407482198523 => n = 
+    312709043917*407482198523 = 127423368713324519534591
+[2023-11-24T13:50:05.781Z INFO  project1::exercise4] Two factors of 127423368713324519534591 are 
+    312709043917 and 407482198523
+Took 14458ms
 \end{verbnobox}
 
 
 \section*{Working hours}
-I used approximately 1 hour for exercise 1 and 2. But exercise 3 and 4 took approximately 20 hours as I had to rewrite the program several times.
+I used approximately 1 hour for exercise 1 and 2. But exercise 3 and 4 took approximately 25 hours as I had to rewrite the program several times. Then I spent approximately 2 hours writing this report.
+Total time spent: circa 28 hours.
+
+
+\section*{Source code}
+\lstinputlisting[language=Rust, breaklines=true, style=boxed]{../project1/src/exercise3.rs}
 
 
 \newpage
 \bibliographystyle{unsrt}
 \bibliography{references}
+
 
 
 \end{document}
