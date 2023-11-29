@@ -57,6 +57,9 @@ fn find_factors(n: BigUint) -> Option<(BigUint, BigUint)> {
                     // r^2 mod N = 2*j*sqrt(N) + j^2 (for small j)
                     // works for j < sqrt(2N) - sqrt(N) = (sqrt(2) - 1)sqrt(N) = 0.414*sqrt(N)
 
+                    // let r: BigUint = s.clone() * BigUint::from((j as f64).sqrt().floor() as u32) + BigUint::from(j);
+                    // let r2 = r.pow(2) % &n;
+                    // 26034ms vs 317643ms
                     let r = &s + j;
                     let r2: BigUint = r.pow(2) - n.clone();
                     if let Some(r2_vec) = check_smoothness(r2.clone(), p) {

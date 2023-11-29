@@ -6,13 +6,15 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{hyperref}
-
+\usepackage{listings}
+\newenvironment{Courier}{\fontfamily{pcr}\selectfont}{\par}
 % Title page
-\title{Project 2}
-\author{Fredrick Nilsson}
+\title{Project 2: Shift Register Sequences}
+\author{Group 06: Fredrick Nilsson}
 \date{\today}
 
 \begin{document}
+
 
 \maketitle
 
@@ -20,15 +22,160 @@
 
 \newpage
 
-\section*{Exercise 1}
+\section*{Home Exercise 1}¨
+\subsection*{1.\ \(p(x) = x^4 + x^2 + 1 \text{ over } \mathbb{F}_2\)}
 
-\newpage
+    Since \(x^4+x^2+1={(x^2+x+1)}^2\) it is not irreducible, and therefore not primitive.
 
-\section*{Exercise 2}
+\subsection*{2.\ \(p(x) = x^3 + x + 1 \text{ over } \mathbb{F}_3\)}
 
-\newpage
+    Since \(x^3+x+1=x^3+3x^2+4x+4=(x+2)(x^2+x+2)\), it clearly has factors and is therefore not irreducible. Since it is not irreducible, it is not primitive.
 
-\section*{Exercise 3}
+\subsection*{3.\ \(p(x) = x^2 + \alpha^5x + 1 \text{ over } \mathbb{F}_{2^4}\text{, where } \alpha^4 + \alpha + 1 = 0\)}
+
+If there is an \textit{i} such that \(p(a^i) = 0 \), then \(p(x)\) has a root, and is therefore not primitive nor irreducible.
+\\
+If \textit{i} = 6, then \(p(\alpha^6) = \alpha^{12} + \alpha^{11} + 1 = (\alpha^3 + \alpha^2 + \alpha + 1) + (\alpha^3 + \alpha^2 + \alpha) + 1 = 
+2\alpha^3 + 2\alpha^2 + 2\alpha + 2 = 0\)
+As shown, \(p(x)\) is reducible and therefore not primitive.
+\section*{Lab Exercise 1}
+    \subsection*{1.\ \(p(x) = x^{23} + x^5 + 1 \text{ over } \mathbb{F}_2\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > Primitive(\(x^{23} + x^5 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > True
+        \end{Courier}
+        Therefore \(p(x)\) is primitive, and therefore irreducible.
+
+    \subsection*{2.\ \(p(x) = x^{23} + x^6 + 1 \text{ over } \mathbb{F}_2\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > Primitive(\(x^{23} + x^6 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > False
+        \\
+        \hspace*{10pt} > Irreduc(\(x^{23} + x^6 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > False
+        \end{Courier}
+        Therefore \(p(x)\) is neither a primitive nor irreducible.
+
+    \subsection*{3.\ \(p(x) = x^{18} + x^3 + 1 \text{ over } \mathbb{F}_2\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > Primitive(\(x^{18} + x^3 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > False
+        \\
+        \hspace*{10pt} > Irreduc(\(x^{18} + x^3 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > True
+        \end{Courier}
+        Therefore \(p(x)\) is not a primitive, but it is irreducible.
+
+    \subsection*{4.\ \(p(x) = x^{8} + x^6 + 1 \text{ over } \mathbb{F}_7\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > Primitive(\(x^{8} + x^6 + 1\)) \textbf{mod} 7
+        \\
+        \hspace*{10pt} > False
+        \\
+        \hspace*{10pt} > Irreduc(\(x^{8} + x^6 + 1\)) \textbf{mod} 7
+        \\
+        \hspace*{10pt} > False
+        \end{Courier}
+        Therefore \(p(x)\) is neither a primitive nor irreducible.
+
+    \subsection*{5.\ \(p(x) = x^{6} + \alpha^5x + 1 \text{ over } \mathbb{F}_{2^4}\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > Primitive(\(x^{23} + x^6 + 1\)) \textbf{mod} 2
+        \\
+        \hspace*{10pt} > True
+        \end{Courier}
+        Therefore \(p(x)\) is primitive.
+
+\section*{Home Exercise 2}
+\(|\mathbb{F}_{2^4}| = 16 \implies \alpha^{15}  \equiv  1 \), therefore the possible orders for a polynomial consisting of one \(\alpha\) are all possible factors of 15, that is 1, 3, 5 and 15.
+\subsection*{1.\ \(\alpha\)}
+
+\(ord(\alpha) = n \implies \alpha^n \equiv \alpha^{15}  \implies n=15\).
+The order of \(\alpha\) is 15.
+\subsection*{2.\ \(\alpha^2\)}
+\(ord(\alpha) = n \implies {\alpha^2}^n \equiv \alpha^{15} \implies n=15\).
+The order of \(\alpha\) is 15.
+\subsection*{3.\ \(\alpha^3\)}
+\(ord(\alpha) = n \implies {\alpha^3}^n \equiv \alpha^{15} \implies n=5\).
+The order of \(\alpha\) is 5.
+\subsection*{4.\ \(\alpha^5\)}
+\(ord(\alpha) = n \implies {\alpha^5}^n \equiv \alpha^{15} \implies n=3\).
+The order of \(\alpha\) is 3.
+\section*{Lab Exercise 2}
+
+    \begin{Courier}
+    \hspace*{10pt} > G18 := GF(2, 18, \(\alpha^{18}\) + \(\alpha^3\) + 1)
+    \\
+    \hspace*{10pt} > G18 := \(\mathbb{F}_{2^{18}}\)
+
+    \end{Courier}
+    \subsection*{1.\ \(\alpha\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > a := G18:-ConvertIn(\(\alpha\));
+        \\
+        \hspace*{10pt} > ...
+        \\
+        \hspace*{10pt} > G18:-order(a)
+        \\
+        \hspace*{10pt} > 189
+        \end{Courier}
+
+    \subsection*{2.\ \(\alpha^2\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > a := G18:-ConvertIn(\(\alpha^2\));
+        \\
+        \hspace*{10pt} > ...
+        \\
+        \hspace*{10pt} > G18:-order(a)
+        \\
+        \hspace*{10pt} > 189
+        \end{Courier}
+
+    \subsection*{3.\ \(\alpha^3\)}
+
+        \begin{Courier}
+        \hspace*{10pt} > a := G18:-ConvertIn(\(\alpha^3\));
+        \\
+        \hspace*{10pt} > ...
+        \\
+        \hspace*{10pt} > G18:-order(a)
+        \\
+        \hspace*{10pt} > 63
+        \end{Courier}
+
+    \subsection*{4.\ \(\alpha+\alpha^3\)}
+
+    \begin{Courier}
+        \hspace*{10pt} > a := G18:-ConvertIn(\(\alpha + \alpha^3\));
+        \\
+        \hspace*{10pt} > ...
+        \\
+        \hspace*{10pt} > G18:-order(a)
+        \\
+        \hspace*{10pt} > 262143
+        \end{Courier}
+
+
+\section*{Home Exercise 3}
+\section*{Lab Exercise 3}
+\section*{Home Exercise 4}
+\section*{Lab Exercise 4}
+\section*{Home Exercise 5}
+\section*{Lab Exercise 5}
+asdaadsssd\cite{wiki:shiftregister}
+
 
 \newpage
 \bibliographystyle{unsrt}
