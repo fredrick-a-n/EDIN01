@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 int readseq(FILE* fp,int* seq);
 //read a De Bruijn sequence from file and store in seq
