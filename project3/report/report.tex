@@ -6,9 +6,12 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{hyperref}
+\usepackage{listings, listings-rust}
+\usepackage{seqsplit}
+
 
 % Title page
-\title{Project 3}
+\title{Project 3: Correlation Attack}
 \author{Fredrick Nilsson}
 \date{\today}
 
@@ -16,22 +19,23 @@
 
 \maketitle
 
-\tableofcontents
-
 \newpage
 
 \section*{Exercise 1}
+I found the following initial states: \\
+\(K_1\): [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]\\
+\(K_2\): [0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1]\\
+\(K_3\): [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0]\\
+For the given output sequence: \seqsplit{1001000011101100101101011001001011010110101110011010101010010000001100100110001110111011011100010001111111010101000001000010101110110000111100011100001010000110010011000001000110001110111101010}
+\\\\
 
 \newpage
 
 \section*{Exercise 2}
 
-\newpage
+\subsection*{Source code}
+\lstinputlisting[language=Rust, breaklines=true, style=boxed]{../project/src/exercise1.rs}
 
-\section*{Exercise 3}
 
-\newpage
-\bibliographystyle{unsrt}
-\bibliography{references}
 
 \end{document}

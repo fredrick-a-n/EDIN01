@@ -30,6 +30,7 @@ fn exercise5() {
             }
         );
     }
+    //println!("z5: {:?}", z5.split_at(635).0);
     // print to file
     let mut file = std::fs::File::create("output.txt").unwrap();
     file.write_all(
