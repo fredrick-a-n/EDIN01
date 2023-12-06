@@ -12,7 +12,7 @@
 
 % Title page
 \title{Project 3: Correlation Attack}
-\author{Fredrick Nilsson}
+\author{Group 06: Fredrick Nilsson}
 \date{\today}
 
 \begin{document}
@@ -23,15 +23,19 @@
 
 \section*{Exercise 1}
 I found the following initial states: \\
-\(K_1\): [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]\\
-\(K_2\): [0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1]\\
-\(K_3\): [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0]\\
+\(K_1\): [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1] with a correlation 0.69948184\\
+\(K_2\): [0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1] with a correlation 0.7098446\\
+\(K_3\): [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0] with a correlation 0.78238344\\
 For the given output sequence: \seqsplit{1001000011101100101101011001001011010110101110011010101010010000001100100110001110111011011100010001111111010101000001000010101110110000111100011100001010000110010011000001000110001110111101010}
 \\\\
 
-\newpage
 
 \section*{Exercise 2}
+With a correlation attack, we have to search through \(2^{L}\) for each LFSR of length L. For the LFSRs in this example it adds up to \(2^{13}+2^{15}+2^{17}\) states to search though, which we assumes takes T time.\\
+With exhaustive key search we have to search through all states of each of the LFSRs for each state in the others which equates to \(2^{13} \times 2^{15} \times 2^{17}\).\\
+We can therefore calculate the amount of time it takes as \(\frac{2^{13} \times 2^{15} \times 2^{17}}{2^{13}+2^{15}+2^{17}} \times  T = \frac{4294967296}{21}  \times  T \approx 2.05 \times 10^8 \times T \). \\
+For example, on my Macbook Air (2021), it takes approximately 912 milliseconds to run the correlation attack. So a rough estimate of the time it would take to run exhaustive key search is \(2.05 \times 10^8 \times 0.912 \approx 1.87 \times 10^8\) seconds, which is about 5.9 years.\\
+
 
 \subsection*{Source code}
 \lstinputlisting[language=Rust, breaklines=true, style=boxed]{../project/src/exercise1.rs}

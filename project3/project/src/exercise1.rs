@@ -1,20 +1,20 @@
-
+use rayon::prelude::*;
 
 pub fn exercise1() {
     let num = include_str!("../task06.txt").chars().map(|c| c.to_digit(10).unwrap() as u8).collect::<Vec<u8>>();
 
     // Primitive polynomials
-    let prim: Vec<Vec<u8>> = vec![
+    let prim: &Vec<Vec<u8>> = &vec![
         vec![1,0,1,1,0,0,1,1,0,1,0,1,1], 
         vec![1,0,1,0,1,1,0,0,1,1,0,1,0,1,0],
         vec![1,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,0]];
 
     // Generate de Bruijn sequences for the primitive polynomials
-    let seq: Vec<Vec<u8>> = prim.iter()
-        .map(|p| lfsr(p, vec![0; p.len()], 2_usize.pow(p.len() as u32))).collect();
+    let seq: &Vec<Vec<u8>> = &prim.into_par_iter()
+        .map(|p| lfsr(&p, vec![0; p.len()], 2_usize.pow(p.len() as u32))).collect();
 
     // Find the position of the states with maximum correlation to the given number
-    let pos = seq.iter().map(|s| max_p(s, &num)).collect::<Vec<usize>>();
+    let pos = seq.into_par_iter().map(|s| max_p(&s, &num)).collect::<Vec<usize>>();
 
     // Get the specific states of the sequence with the maximum correlation
     let states = seq.iter().zip(pos.iter()).map(|(s, i)| s[*i..*i+num.len()].to_vec()).collect::<Vec<Vec<u8>>>();
@@ -45,18 +45,17 @@ fn max_p(seq: &Vec<u8>, num: &Vec<u8>) -> usize {
     for i in 0..(seq.len()-num.len()) {
         let j = i + num.len();
         let state = seq[i..j].to_vec();
-        let dist = distance(state, num.clone());
+        let dist = distance(&state, &num);
         dists.push(dist);
     }
-    let (pos, max) = dists.iter().enumerate().max_by(|(_, x),(_, y)| x.partial_cmp(y).unwrap()).unwrap();
-    println!("Found max: {}", max);
+    let (pos, _max) = dists.iter().enumerate().max_by(|(_, x),(_, y)| (0.5-**x).abs().partial_cmp(&(0.5-**y).abs()).unwrap()).unwrap();
+    println!("Max: {}", _max);
     pos
 }
 
 
 // Generates a lfsr sequence of length len, starting with the state init and using prim as the primitive polynomial
-fn lfsr(prim: &Vec<u8>, init: Vec<u8>, len: usize) -> Vec<u8> {
-    let mut seq: Vec<u8> = init.clone();
+fn lfsr(prim: &Vec<u8>, mut seq: Vec<u8>, len: usize) -> Vec<u8> {
     for _ in 0..len {
         let last = seq.as_slice()[seq.len()-prim.len()..].to_vec();
         if last[1..].to_vec() == vec![0_u8; prim.len()-1] {
@@ -72,24 +71,15 @@ fn lfsr(prim: &Vec<u8>, init: Vec<u8>, len: usize) -> Vec<u8> {
 
 // Bitwise and of two vectors
 fn and(a: Vec<u8>, b: Vec<u8>) -> Vec<u8> {
-    let mut out: Vec<u8> = vec![0; a.len()];
-    for i in 0..a.len() {
-        out[i] = a[i] * b[i];
-    }
-    out
+    a.iter().zip(b.iter()).map(|(a,b)| a&b).collect::<Vec<u8>>()
 }
 
 // Calculates the distance between two vectors
-fn distance(a: Vec<u8>, b: Vec<u8>) -> f32 {
-    let n = a.len() as f32;
-    1.0 - hamming(a,b) as f32 / n as f32
+fn distance(a: &Vec<u8>, b: &Vec<u8>) -> f32 {
+    1.0 - hamming(a,b) as f32 / a.len() as f32
 }
 
 // Calculates the hamming distance between two vectors
-fn hamming(a: Vec<u8>, b: Vec<u8>) -> u8 {
-    let mut out: u8 = 0;
-    for i in 0..a.len() {
-        out += (a[i] ^ b[i]) as u8;
-    }
-    out
+fn hamming(a: &Vec<u8>, b: &Vec<u8>) -> u8 {
+    a.iter().zip(b.iter()).map(|(a,b)| a^b).sum()
 }
